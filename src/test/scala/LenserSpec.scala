@@ -3,6 +3,8 @@ import org.scalatest.matchers.MustMatchers
 
 import scalaz._, Scalaz._
 
+import com.github.hexx.scalaz.Lenser
+
 case class Person(name: String, age: Int)
 
 class GaedsSpec extends WordSpec with MustMatchers {

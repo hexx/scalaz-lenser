@@ -22,12 +22,11 @@ object Lenser {
     def mkParam(name: String, tpe: c.Type) =
       ValDef(Modifiers(Flag.PARAM), newTermName(name), TypeTree(tpe), EmptyTree)
 
-    // (a$: classType) => (x$: memberType) => a$.copy(memberName = x$)
+    // (a$: classType, x$: memberType) => a$.copy(memberName = x$)
     def mkSetter(memberName: String, classType: Type, memberType: Type) =
-      Function(List(mkParam("a$", classType)),
-        Function(List(mkParam("x$", memberType)),
-          Apply(Select(Ident(newTermName("a$")), newTermName("copy")),
-            List(AssignOrNamedArg(Ident(newTermName(memberName)), Ident(newTermName("x$")))))))
+      Function(List(mkParam("a$", classType), mkParam("x$", memberType)),
+        Apply(Select(Ident(newTermName("a$")), newTermName("copy")),
+          List(AssignOrNamedArg(Ident(newTermName(memberName)), Ident(newTermName("x$"))))))
 
     // (a$: classType) => a$.memberName
     def mkGetter(memberName: String, classType: Type) =
@@ -35,7 +34,7 @@ object Lenser {
 
     // scalaz.Lens.lensg(setter, getter)
     def mkLens(setter: Tree, getter: Tree) =
-      Apply(Select(Select(Ident(newTermName("scalaz")), newTermName("Lens")), newTermName("lensg")), List(setter, getter))
+      Apply(Select(Select(Ident(newTermName("scalaz")), newTermName("Lens")), newTermName("lensu")), List(setter, getter))
 
     val classType = implicitly[WeakTypeTag[A]].tpe
     val Literal(Constant(memberName: String)) = propName.tree.asInstanceOf[Tree]
